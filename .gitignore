@@ -1,0 +1,67 @@
+.claude
+# ===== Java =====
+*.class
+*.jar
+*.war
+*.ear
+*.nar
+target/
+!.mvn/wrapper/maven-wrapper.jar
+!**/src/main/**/target/
+!**/src/test/**/target/
+
+# ===== IDE =====
+.idea/
+*.iml
+*.ipr
+*.iws
+.project
+.classpath
+.settings/
+.factorypath
+*.swp
+*.swo
+.vscode/
+!.vscode/extensions.json
+
+# ===== Node/Frontend =====
+node_modules/
+dist/
+.pnpm-store/
+*.local
+.env.local
+.env.*.local
+
+# ===== Logs =====
+*.log
+logs/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# ===== OS =====
+.DS_Store
+Thumbs.db
+
+# ===== Environment =====
+.env
+!.env.example
+*.env.local
+
+# ===== Build outputs =====
+build/
+out/
+
+# ===== CodeQL =====
+codeql-dbs/
+sarif-output/
+
+# ===== Git repos (cloned) =====
+backend/code-agent/repos/
+
+# ===== Uploads =====
+uploads/
+excel-temp/
+/docker/init-scripts/02-init-data.sql
+/docker/scripts/__pycache__
