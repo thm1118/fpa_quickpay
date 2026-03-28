@@ -41,6 +41,10 @@ jwt:
 
 service:
   internal-key: fintech-internal-service-key-2024
+  corebanking:
+    url: http://localhost:8083
+  riskcontrol:
+    url: http://localhost:8084
 
 logging:
   level:
