@@ -8,6 +8,8 @@ import com.fintech.quickpay.entity.Transaction;
 import com.fintech.quickpay.entity.User;
 import com.fintech.quickpay.exception.BusinessException;
 import com.fintech.quickpay.exception.ResourceNotFoundException;
+import com.fintech.quickpay.messaging.EventPublisher;
+import com.fintech.quickpay.messaging.event.NotificationEvent;
 import com.fintech.quickpay.repository.TransactionRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -28,6 +30,7 @@ public class TransactionService {
     private final UserService userService;
     private final RiskService riskService;
     private final NotificationService notificationService;
+    private final EventPublisher eventPublisher;
 
     private static final BigDecimal TRANSFER_FEE_RATE = new BigDecimal("0.001"); // 0.1%
     private static final BigDecimal MIN_FEE = new BigDecimal("0.01");
@@ -112,6 +115,16 @@ public class TransactionService {
         notificationService.sendTransactionNotification(user, transaction, false);
         notificationService.sendTransactionNotification(toAccount.getUser(), transaction, true);
 
+        // Publish notification event
+        eventPublisher.publish("quickpay.notification", transaction.getTransactionNo(),
+                new NotificationEvent(
+                        transaction.getTransactionNo(),
+                        transaction.getType().name(),
+                        fromAccount.getUser().getId(),
+                        toAccount.getUser().getId(),
+                        transaction.getAmount()
+                ));
+
         return convertToDTO(transaction);
     }
 
@@ -141,6 +154,16 @@ public class TransactionService {
 
         notificationService.sendSystemNotification(user, "Recharge Successful",
                 String.format("Successfully recharged %.2f to your account", request.getAmount()));
+
+        // Publish notification event (recharge has no fromUser)
+        eventPublisher.publish("quickpay.notification", transaction.getTransactionNo(),
+                new NotificationEvent(
+                        transaction.getTransactionNo(),
+                        transaction.getType().name(),
+                        null,
+                        account.getUser().getId(),
+                        transaction.getAmount()
+                ));
 
         return convertToDTO(transaction);
     }
@@ -192,6 +215,16 @@ public class TransactionService {
 
         notificationService.sendSystemNotification(user, "Withdrawal Successful",
                 String.format("Successfully withdrew %.2f from your account", amount));
+
+        // Publish notification event (withdraw has no toUser)
+        eventPublisher.publish("quickpay.notification", transaction.getTransactionNo(),
+                new NotificationEvent(
+                        transaction.getTransactionNo(),
+                        transaction.getType().name(),
+                        account.getUser().getId(),
+                        null,
+                        transaction.getAmount()
+                ));
 
         return convertToDTO(transaction);
     }

@@ -46,6 +46,9 @@ public class User {
     @Column(length = 6)
     private String paymentPassword;
 
+    @Column(length = 50)
+    private String customerNo;
+
     @CreationTimestamp
     @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt;

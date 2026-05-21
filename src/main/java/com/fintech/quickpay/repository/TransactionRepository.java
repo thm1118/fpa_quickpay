@@ -35,4 +35,10 @@ public interface TransactionRepository extends JpaRepository<Transaction, Long> 
     long countByFromAccountAndCreatedAtAfter(Account account, LocalDateTime startTime);
 
     BigDecimal sumAmountByFromAccountAndCreatedAtAfter( Account account, LocalDateTime todayStart);
+
+    @Query("SELECT t.status, COUNT(t), COALESCE(SUM(t.amount), 0) FROM Transaction t " +
+           "WHERE t.createdAt >= :dayStart AND t.createdAt < :dayEnd " +
+           "GROUP BY t.status")
+    List<Object[]> aggregateByStatusForDay(@Param("dayStart") LocalDateTime dayStart,
+                                           @Param("dayEnd") LocalDateTime dayEnd);
 }
